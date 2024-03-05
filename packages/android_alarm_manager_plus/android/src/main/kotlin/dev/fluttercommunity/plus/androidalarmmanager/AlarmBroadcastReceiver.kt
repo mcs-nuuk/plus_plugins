@@ -26,8 +26,7 @@ class AlarmBroadcastReceiver : BroadcastReceiver() {
      * context before the callback can be invoked.
      */
 
-    @Override
-    open fun onReceive(context: Context, intent: Intent?) {
+    override fun onReceive(context: Context, intent: Intent?) {
         AlarmFlagManager.set(context, intent)
         val powerManager: PowerManager =
             context.getSystemService(Context.POWER_SERVICE) as PowerManager
@@ -36,10 +35,10 @@ class AlarmBroadcastReceiver : BroadcastReceiver() {
                 PowerManager.ACQUIRE_CAUSES_WAKEUP or
                 PowerManager.ON_AFTER_RELEASE, "AlarmBroadcastReceiver:My wakelock"
         )
-        val startIntent: Intent = context
-            .getPackageManager()
-            .getLaunchIntentForPackage(context.getPackageName())
-        if (startIntent != null) startIntent.setFlags(
+        val startIntent: Intent? = context
+            .packageManager
+            .getLaunchIntentForPackage(context.packageName)
+        startIntent?.setFlags(
             (Intent.FLAG_ACTIVITY_REORDER_TO_FRONT or
                 Intent.FLAG_ACTIVITY_NEW_TASK or
                 Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED)
@@ -48,6 +47,6 @@ class AlarmBroadcastReceiver : BroadcastReceiver() {
         context.startActivity(startIntent)
         AlarmService.enqueueAlarmProcessing(context, intent)
         wakeLock.release()
-        if (Build.VERSION.SDK_INT < 31) context.sendBroadcast(Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS))
+        //if (Build.VERSION.SDK_INT < 31) context.sendBroadcast(Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS))
     }
 }
